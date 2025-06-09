@@ -1,12 +1,24 @@
 import Vue from 'vue';
+import _ from 'lodash';
 import axios from 'axios'
 import moment from 'moment';
-import router from './router/';
+import router from './router';
 import App from './components/App.vue';
+
+window.$ = window.jQuery = require('jquery');
+window.Popper = require('popper.js').default;
+
+require('bootstrap');
+
+$('body').tooltip({
+    selector: '[data-toggle=tooltip]'
+});
 
 Vue.prototype.$http = axios.create();
 
 window.Bus = new Vue({name: 'Bus'});
+
+Vue.component('loader', require('./components/Status/Loader.vue'));
 
 Vue.mixin({
     methods: {
@@ -17,11 +29,36 @@ Vue.mixin({
             return moment(unixTime * 1000).add(new Date().getTimezoneOffset() / 60)
         },
 
+
+        /**
+         * Extract the job base name.
+         */
+        jobBaseName(name){
+            if (!name.includes('\\')) return name;
+
+            var parts = name.split("\\");
+
+            return parts[parts.length - 1];
+        },
+
+
         /**
          * Convert to human readable timestamp.
          */
         readableTimestamp(timestamp){
-            return this.formatDate(timestamp).format('HH:mm:ss');
+            return this.formatDate(timestamp).format('YY-MM-DD HH:mm:ss');
+        },
+
+
+        /**
+         * Convert to human readable timestamp.
+         */
+        displayableTagsList(tags){
+            if (!tags.length) return '';
+
+            return _.reduce(tags, (s, n)=> {
+                return (s ? ', ' : '') + _.truncate(n);
+            }, '');
         }
     }
 });
@@ -29,17 +66,13 @@ Vue.mixin({
 new Vue({
     el: '#root',
 
-
     router,
-
 
     /**
      * The component's data.
      */
     data() {
-        return {
-            showModal: false
-        }
+        return {}
     },
 
     render: h => h(App),
