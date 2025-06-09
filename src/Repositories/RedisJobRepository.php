@@ -193,7 +193,7 @@ class RedisJobRepository implements JobRepository
         return $this->indexJobs(collect($jobs)->filter(function ($job) {
             $job = is_array($job) ? array_values($job) : null;
 
-            return is_array($job) && $job[0] !== null;
+            return is_array($job) && $job[0] !== null && $job[0] !== false;
         })->values(), $indexFrom);
     }
 
@@ -488,7 +488,7 @@ class RedisJobRepository implements JobRepository
         $job = is_array($attributes) && $attributes[0] !== null ? (object) array_combine($this->keys, $attributes) : null;
 
         if ($job && $job->status !== 'failed') {
-            return null;
+            return;
         }
 
         return $job;
