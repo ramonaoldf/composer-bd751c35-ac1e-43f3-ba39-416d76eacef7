@@ -5,7 +5,7 @@ namespace Laravel\Horizon\Listeners;
 use Laravel\Horizon\Contracts\TagRepository;
 use Laravel\Horizon\Events\JobPushed;
 
-class StoreMonitoredTags
+class StoreTagsForRecentJob
 {
     /**
      * The tag repository implementation.
@@ -33,10 +33,14 @@ class StoreMonitoredTags
      */
     public function handle(JobPushed $event)
     {
-        $monitoring = $this->tags->monitored($event->payload->tags());
+        $tags = collect($event->payload->tags())->map(function ($tag) {
+            return 'recent:'.$tag;
+        })->all();
 
-        if (! empty($monitoring)) {
-            $this->tags->add($event->payload->id(), $monitoring);
-        }
+        $this->tags->addTemporary(
+            config('horizon.trim.recent_failed', config('horizon.trim.recent', 60)),
+            $event->payload->id(),
+            $tags
+        );
     }
 }
