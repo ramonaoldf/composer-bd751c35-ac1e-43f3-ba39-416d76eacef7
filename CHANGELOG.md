@@ -1,8 +1,14 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/horizon/compare/v2.1.0...2.0)
+## [v2.2.0 (2019-02-12)](https://github.com/laravel/horizon/compare/v2.1.0...v2.2.0)
 
-## [v2.1.0 (11-02-2019)](https://github.com/laravel/horizon/compare/v2.0.3...v2.1.0)
+### Added
+- Laravel 5.8 support ([292bbc1](https://github.com/laravel/horizon/commit/292bbc15ce814ae24e0b47d749631cf45a827bc1))
+
+### Fixed
+- Fix Failed Jobs page showing no results when failed jobs do exist ([#511](https://github.com/laravel/horizon/pull/511))
+
+## [v2.1.0 (2019-02-11)](https://github.com/laravel/horizon/compare/v2.0.3...v2.1.0)
 
 ### Added
 - Let user choose custom env ([#483](https://github.com/laravel/horizon/pull/483))
@@ -21,7 +27,7 @@
 - Fix jobs per minute over estimation ([#502](https://github.com/laravel/horizon/pull/502))
 - Prevent horizontal scrolling in Dashboard supervisors section ([#506](https://github.com/laravel/horizon/pull/506))
 
-## [v2.0.3 (22-01-2019)](https://github.com/laravel/horizon/compare/v2.0.2...v2.0.3)
+## [v2.0.3 (2019-01-22)](https://github.com/laravel/horizon/compare/v2.0.2...v2.0.3)
 
 ### Changed
 - Updated overview stats labels on the dashboard ([#461](https://github.com/laravel/horizon/pull/461))
@@ -30,12 +36,12 @@
 ### Fixed
 - Check for existence of `stats` before calling toLocaleString ([#469](https://github.com/laravel/horizon/pull/469))
 
-## [v2.0.2 (10-01-2019)](https://github.com/laravel/horizon/compare/v2.0.1...v2.0.2)
+## [v2.0.2 (2019-01-10)](https://github.com/laravel/horizon/compare/v2.0.1...v2.0.2)
 
 ### Fixed
 - Update outdated compiled assets ([2a420af](https://github.com/laravel/horizon/commit/2a420af4bb3d79785ef7ff7cd27f75a1c027ab19))
 
-## [v2.0.1 (10-01-2019)](https://github.com/laravel/horizon/compare/v2.0.0...v2.0.1)
+## [v2.0.1 (2019-01-10)](https://github.com/laravel/horizon/compare/v2.0.0...v2.0.1)
 
 ### Added
 - Added memory usage to the config ([#463](https://github.com/laravel/horizon/pull/463))
@@ -46,7 +52,7 @@
 ### Fixed
 - Fixed invalid `doctype` declaration ([#448](https://github.com/laravel/horizon/pull/448))
 
-## [v2.0.0 (14-11-2018)](https://github.com/laravel/horizon/compare/v1.4.3...v2.0.0)
+## [v2.0.0 (2018-11-14)](https://github.com/laravel/horizon/compare/v1.4.3...v2.0.0)
 
 ### Added
 - Added `horizon:install` command  ([#422](https://github.com/laravel/horizon/pull/422))
