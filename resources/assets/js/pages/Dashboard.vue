@@ -16,6 +16,7 @@
                 stats: {},
                 workers: [],
                 workload: [],
+                ready: false,
             };
         },
 
@@ -35,6 +36,28 @@
          */
         destroyed() {
             clearTimeout(this.timeout);
+        },
+
+
+        computed: {
+            /**
+             * Determine the recent job period label.
+             */
+            recentJobsPeriod() {
+                return ! this.ready
+                    ? 'Jobs past hour'
+                    : `Jobs past ${this.determinePeriod(this.stats.periods.recentJobs)}`;
+            },
+
+
+            /**
+             * Determine the recently failed job period label.
+             */
+            recentlyFailedPeriod() {
+                return ! this.ready
+                    ? 'Failed jobs past 7 days'
+                    : `Failed jobs past ${this.determinePeriod(this.stats.periods.recentlyFailed)}`;
+            },
         },
 
 
@@ -121,6 +144,14 @@
                 return moment.duration(time, "seconds").humanize().replace(/^(.)|\s+(.)/g, function ($1) {
                     return $1.toUpperCase();
                 });
+            },
+
+
+            /**
+             * Determine the unit for the given timeframe.
+             */
+            determinePeriod(minutes) {
+                return moment.duration(moment().diff(moment().subtract(minutes, "minutes"))).humanize().replace(/^An?/i, '');
             }
         }
     }
@@ -139,21 +170,21 @@
                                 <h2 class="stat-title">Jobs Per Minute</h2>
                                 <h3 class="stat-meta">&nbsp;</h3>
                                 <span class="stat-value">
-                                    {{ stats.jobsPerMinute.toLocaleString() }}
+                                    {{ stats.jobsPerMinute ? stats.jobsPerMinute.toLocaleString() : 0 }}
                                 </span>
                             </div>
                             <div class="stat col-3 p-4">
-                                <h2 class="stat-title">Jobs past hour</h2>
+                                <h2 class="stat-title" v-text="recentJobsPeriod"></h2>
                                 <h3 class="stat-meta">&nbsp;</h3>
                                 <span class="stat-value">
-                                    {{ stats.recentJobs.toLocaleString() }}
+                                    {{ stats.recentJobs ? stats.recentJobs.toLocaleString() : 0 }}
                                 </span>
                             </div>
                             <div class="stat col-3 p-4">
-                                <h2 class="stat-title">Failed Jobs past hour</h2>
+                                <h2 class="stat-title" v-text="recentlyFailedPeriod"></h2>
                                 <h3 class="stat-meta">&nbsp;</h3>
                                 <span class="stat-value">
-                                    {{ stats.recentlyFailed.toLocaleString() }}
+                                    {{ stats.recentlyFailed ? stats.recentlyFailed.toLocaleString() : 0 }}
                                 </span>
                             </div>
                             <div class="stat col-3 p-4 border-right-0">
@@ -172,7 +203,7 @@
                                 <h2 class="stat-title">Total Processes</h2>
                                 <h3 class="state-meta">&nbsp;</h3>
                                 <span class="stat-value">
-                                    {{ stats.processes.toLocaleString() }}
+                                    {{ stats.processes ? stats.processes.toLocaleString() : 0 }}
                                 </span>
                             </div>
 
@@ -223,8 +254,8 @@
                             <td>
                                 <span>{{ queue.name }}</span>
                             </td>
-                            <td>{{ queue.processes.toLocaleString() }}</td>
-                            <td>{{ queue.length.toLocaleString() }}</td>
+                            <td>{{ queue.processes ? stats.processes.toLocaleString() : 0 }}</td>
+                            <td>{{ queue.length ? stats.length.toLocaleString() : 0 }}</td>
                             <td>{{ humanTime(queue.wait) }}</td>
                         </tr>
                         </tbody>
