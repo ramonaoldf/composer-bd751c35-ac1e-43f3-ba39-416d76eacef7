@@ -2,7 +2,6 @@
 
 namespace Laravel\Horizon;
 
-use ReflectionMethod;
 use Illuminate\Support\Str;
 use Laravel\Horizon\Events\JobPushed;
 use Laravel\Horizon\Events\JobDeleted;
@@ -75,13 +74,7 @@ class RedisQueue extends BaseQueue
      */
     public function later($delay, $job, $data = '', $queue = null)
     {
-        if (count((new ReflectionMethod($this, 'createPayload'))->getParameters()) === 3) {
-            $payload = $this->createPayload($job, $queue, $data);
-        } else {
-            $payload = $this->createPayload($job, $data);
-        }
-
-        $payload = (new JobPayload($payload))->prepare($job)->value;
+        $payload = (new JobPayload($this->createPayload($job, $queue, $data)))->prepare($job)->value;
 
         return tap(parent::laterRaw($delay, $payload, $queue), function () use ($payload, $queue) {
             $this->event($this->getQueue($queue), new JobPushed($payload));
