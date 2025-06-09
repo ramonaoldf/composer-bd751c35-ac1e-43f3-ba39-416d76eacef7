@@ -10,14 +10,14 @@ class RedisTagRepository implements TagRepository
     /**
      * The Redis connection instance.
      *
-     * @var RedisFactory
+     * @var \Illuminate\Contracts\Redis\Factory
      */
     public $redis;
 
     /**
      * Create a new repository instance.
      *
-     * @param  RedisFactory
+     * @param  \Illuminate\Contracts\Redis\Factory  $redis
      * @return void
      */
     public function __construct(RedisFactory $redis)
@@ -106,6 +106,7 @@ class RedisTagRepository implements TagRepository
     /**
      * Get the number of jobs matching a given tag.
      *
+     * @param  string  $tag
      * @return int
      */
     public function count($tag)
@@ -175,10 +176,10 @@ class RedisTagRepository implements TagRepository
     /**
      * Get the Redis connection instance.
      *
-     * @return \Illuminate\Redis\Connetions\Connection
+     * @return \Illuminate\Redis\Connections\Connection
      */
     protected function connection()
     {
-        return $this->redis->connection('horizon-tags');
+        return $this->redis->connection('horizon');
     }
 }

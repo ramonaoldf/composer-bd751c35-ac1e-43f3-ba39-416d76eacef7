@@ -7,13 +7,12 @@ use Exception;
 use Throwable;
 use Cake\Chronos\Chronos;
 use Illuminate\Support\Str;
-use Symfony\Component\Process\Process;
 use Laravel\Horizon\Contracts\Pausable;
 use Laravel\Horizon\Contracts\Terminable;
 use Laravel\Horizon\Contracts\Restartable;
 use Illuminate\Contracts\Debug\ExceptionHandler;
-use Laravel\Horizon\Events\MasterSupervisorLooped;
 use Laravel\Horizon\Contracts\HorizonCommandQueue;
+use Laravel\Horizon\Events\MasterSupervisorLooped;
 use Laravel\Horizon\Contracts\SupervisorRepository;
 use Laravel\Horizon\Contracts\MasterSupervisorRepository;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
@@ -51,7 +50,7 @@ class MasterSupervisor implements Pausable, Restartable, Terminable
     /**
      * The callback to use to resolve master supervisor names.
      *
-     * @var Closure|null
+     * @var \Closure|null
      */
     public static $nameResolver;
 
@@ -103,7 +102,7 @@ class MasterSupervisor implements Pausable, Restartable, Terminable
     /**
      * Use the given callback to resolve master supervisor names.
      *
-     * @param  Closure  $callback
+     * @param  \Closure  $callback
      * @return void
      */
     public static function determineNameUsing(Closure $callback)
@@ -212,11 +211,12 @@ class MasterSupervisor implements Pausable, Restartable, Terminable
      * Ensure that this is the only master supervisor running for this machine.
      *
      * @return void
+     * @throws \Exception
      */
     public function ensureNoOtherMasterSupervisors()
     {
-        if (! is_null(resolve(MasterSupervisorRepository::class)->find($this->name))) {
-            throw new Exception("A master supervisor is already running on this machine.");
+        if (resolve(MasterSupervisorRepository::class)->find($this->name) !== null) {
+            throw new Exception('A master supervisor is already running on this machine.');
         }
     }
 

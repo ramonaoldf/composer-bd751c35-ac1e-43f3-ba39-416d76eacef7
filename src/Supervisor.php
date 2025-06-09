@@ -6,14 +6,13 @@ use Closure;
 use Exception;
 use Throwable;
 use Cake\Chronos\Chronos;
-use Symfony\Component\Process\Process;
 use Laravel\Horizon\Contracts\Pausable;
 use Laravel\Horizon\Contracts\Terminable;
 use Laravel\Horizon\Contracts\Restartable;
 use Laravel\Horizon\Events\SupervisorLooped;
 use Illuminate\Contracts\Debug\ExceptionHandler;
-use Laravel\Horizon\Contracts\SupervisorRepository;
 use Laravel\Horizon\Contracts\HorizonCommandQueue;
+use Laravel\Horizon\Contracts\SupervisorRepository;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
 
 class Supervisor implements Pausable, Restartable, Terminable
@@ -28,7 +27,7 @@ class Supervisor implements Pausable, Restartable, Terminable
     /**
      * The SupervisorOptions that should be utilized.
      *
-     * @var SupervisorOptions
+     * @var \Laravel\Horizon\SupervisorOptions
      */
     public $options;
 
@@ -49,7 +48,7 @@ class Supervisor implements Pausable, Restartable, Terminable
     /**
      * The time at which auto-scaling last ran for this supervisor.
      *
-     * @var Chronos
+     * @var \Cake\Chronos\Chronos
      */
     public $lastAutoScaled;
 
@@ -70,7 +69,7 @@ class Supervisor implements Pausable, Restartable, Terminable
     /**
      * Create a new supervisor instance.
      *
-     * @param  SupervisorOptions  $options
+     * @param  \Laravel\Horizon\SupervisorOptions  $options
      * @return void
      */
     public function __construct(SupervisorOptions $options)
@@ -123,8 +122,8 @@ class Supervisor implements Pausable, Restartable, Terminable
     /**
      * Create a new process pool with the given options.
      *
-     * @param  array  $options
-     * @return ProcessPool
+     * @param  \Laravel\Horizon\SupervisorOptions  $options
+     * @return \Laravel\Horizon\ProcessPool
      */
     protected function createProcessPool(SupervisorOptions $options)
     {
@@ -141,9 +140,8 @@ class Supervisor implements Pausable, Restartable, Terminable
      */
     public function scale($processes)
     {
-        $this->options->maxProcesses = max(
-            $this->options->maxProcesses,
-            max($processes, count($this->processPools))
+        $this->options->maxProcesses = max($this->options->maxProcesses,
+            $processes, count($this->processPools)
         );
 
         $this->balance($this->processPools->mapWithKeys(function ($pool) use ($processes) {
@@ -161,7 +159,7 @@ class Supervisor implements Pausable, Restartable, Terminable
     {
         foreach ($balance as $queue => $scale) {
             $this->processPools->first(function ($pool) use ($queue) {
-                return $pool->queue() == $queue;
+                return $pool->queue() === $queue;
             }, new class {
                 public function __call($method, $arguments)
                 {
@@ -258,10 +256,11 @@ class Supervisor implements Pausable, Restartable, Terminable
      * Ensure no other supervisors are running with the same name.
      *
      * @return void
+     * @throws \Exception
      */
     public function ensureNoDuplicateSupervisors()
     {
-        if (! is_null(resolve(SupervisorRepository::class)->find($this->name))) {
+        if (resolve(SupervisorRepository::class)->find($this->name) !== null) {
             throw new Exception("A supervisor with the name [{$this->name}] is already running.");
         }
     }
@@ -380,7 +379,7 @@ class Supervisor implements Pausable, Restartable, Terminable
     }
 
     /**
-     * Get the total active process count, including processees pending termination.
+     * Get the total active process count, including processes pending termination.
      *
      * @return int
      */

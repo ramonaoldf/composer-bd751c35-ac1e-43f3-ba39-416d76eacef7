@@ -1,6 +1,5 @@
 <script type="text/ecmascript-6">
     import _ from 'lodash';
-    import axios from 'axios';
     import moment from 'moment';
     import Layout from '../layouts/MainLayout.vue';
     import Panel from '../components/Panels/Panel.vue';
@@ -16,7 +15,7 @@
         /**
          * The component's data.
          */
-        data(){
+        data() {
             return {
                 loadingStats: true,
                 loadingWorkers: true,
@@ -43,6 +42,14 @@
             this.refreshStatsPeriodically();
         },
 
+        /**
+         * Clean after the component is destroyed.
+         */
+        destroyed(){
+            clearInterval(this.interval);
+        },
+
+
         methods: {
             /**
              * Load the general stats.
@@ -52,7 +59,7 @@
                     this.loadingStats = true;
                 }
 
-                axios.get('/horizon/api/stats')
+                this.$http.get('/horizon/api/stats')
                         .then(response => {
                             this.stats = response.data;
 
@@ -74,7 +81,7 @@
                     this.loadingWorkers = true;
                 }
 
-                axios.get('/horizon/api/masters')
+                this.$http.get('/horizon/api/masters')
                         .then(response => {
                             this.workers = response.data;
 
@@ -91,7 +98,7 @@
                     this.loadingWorkload = true;
                 }
 
-                axios.get('/horizon/api/workload')
+                this.$http.get('/horizon/api/workload')
                         .then(response => {
                             this.workload = response.data;
 
@@ -103,8 +110,8 @@
             /**
              * Refresh the stats every period of time.
              */
-            refreshStatsPeriodically(){
-                setInterval(() => {
+            refreshStatsPeriodically() {
+                this.interval = setInterval(() => {
                     this.loadStats(false);
 
                     this.loadWorkers(false);

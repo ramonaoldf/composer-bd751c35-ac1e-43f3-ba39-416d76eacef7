@@ -1,7 +1,10 @@
 import Vue from 'vue';
+import axios from 'axios'
 import moment from 'moment';
 import router from './router/';
 import App from './components/App.vue';
+
+Vue.prototype.$http = axios.create();
 
 window.Bus = new Vue({name: 'Bus'});
 
@@ -33,7 +36,7 @@ new Vue({
     /**
      * The component's data.
      */
-    data(){
+    data() {
         return {
             showModal: false
         }

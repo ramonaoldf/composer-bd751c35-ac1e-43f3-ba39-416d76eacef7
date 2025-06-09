@@ -12,7 +12,7 @@ class RedisConnector extends BaseConnector
      * Establish a queue connection.
      *
      * @param  array  $config
-     * @return \Illuminate\Contracts\Queue\Queue
+     * @return \Laravel\Horizon\RedisQueue
      */
     public function connect(array $config)
     {

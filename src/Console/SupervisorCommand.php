@@ -4,7 +4,6 @@ namespace Laravel\Horizon\Console;
 
 use Exception;
 use Illuminate\Console\Command;
-use Laravel\Horizon\Supervisor;
 use Laravel\Horizon\SupervisorFactory;
 use Laravel\Horizon\SupervisorOptions;
 
@@ -47,7 +46,7 @@ class SupervisorCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return void
      */
     public function handle()
     {
@@ -58,7 +57,7 @@ class SupervisorCommand extends Command
         try {
             $supervisor->ensureNoDuplicateSupervisors();
         } catch (Exception $e) {
-            $this->error("A supervisor with this name is already running.");
+            $this->error('A supervisor with this name is already running.');
 
             return 13;
         }
@@ -90,7 +89,7 @@ class SupervisorCommand extends Command
     /**
      * Get the supervisor options.
      *
-     * @return SupervisorOptions
+     * @return \Laravel\Horizon\SupervisorOptions
      */
     protected function supervisorOptions()
     {

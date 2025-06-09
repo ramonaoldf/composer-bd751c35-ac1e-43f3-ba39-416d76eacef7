@@ -32,7 +32,7 @@ class PurgeCommand extends Command
      * @param  \Laravel\Horizon\Contracts\MasterSupervisorRepository  $masters
      * @param  \Laravel\Horizon\Contracts\SupervisorRepository  $supervisors
      * @param  \Laravel\Horizon\Contracts\ProcessRepository  $processes
-     * @return mixed
+     * @return void
      */
     public function handle(MasterSupervisorRepository $masters,
                            SupervisorRepository $supervisors,
@@ -51,7 +51,7 @@ class PurgeCommand extends Command
      * @param  string  $master
      * @param  \Laravel\Horizon\Contracts\SupervisorRepository  $supervisors
      * @param  \Laravel\Horizon\Contracts\ProcessRepository  $processes
-     * @return mixed
+     * @return void
      */
     public function purge($master,
                           SupervisorRepository $supervisors,
@@ -63,7 +63,7 @@ class PurgeCommand extends Command
             $master, $supervisors->longestActiveTimeout()
         );
 
-        collect($expired)->each(function ($processId) use ($master) {
+        collect($expired)->each(function ($processId) use ($master, $processes) {
             $this->comment("Killing Process: {$processId}");
 
             exec("kill {$processId}");

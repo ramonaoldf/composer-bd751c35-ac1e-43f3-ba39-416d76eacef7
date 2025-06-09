@@ -16,11 +16,19 @@ Horizon requires Laravel 5.5, which is currently in beta, and PHP 7.1+. You may 
 
 After installing Horizon, publish its assets using the `vendor:publish` Artisan command:
 
-    php artisan vendor:publish
+    php artisan vendor:publish --provider="Laravel\Horizon\HorizonServiceProvider"
 
 ## Configuration
 
 After publishing Horizon's assets, its primary configuration file will be located at `config/horizon.php`. This configuration file allows you to configure your worker options and each configuration option includes a description of its purpose, so be sure to thoroughly explore this file.
+
+### Balance Options
+
+Horizon allows you to choose from three balancing strategies: `simple`, `auto`, and `false`. The 'simple' strategy, which is the default, splits the jobs between processes evenly:
+
+    'balance' => 'simple',
+
+The `auto` strategy adjusts the number of worker processes per queue based on the current workload of the queue. When the `balance` option is set to `false`, the default Laravel behavior will be used, which processes queues in the order they are listed in your configuration.
 
 ### Web Dashboard Authentication
 
@@ -55,6 +63,23 @@ If you are deploying Horizon to a live server, you should configure a process mo
 You may gracefully terminate the master Horizon process on your machine using the `horizon:terminate` Artisan command. Any jobs that Horizon is currently processing will be completed and then Horizon will exit:
 
     php artisan horizon:terminate
+
+## Tags
+
+Horizon allows you to assign “tags” to jobs, including mailables, event broadcasts, notifications, and queued event listeners. In fact, Horizon will intelligently and automatically tag most jobs depending on the Eloquent models that are attached to the job. However, if you would like to manually define the tags for one of these object types, you may define a `tags` method on the class:
+
+    class RenderVideo implements ShouldQueue
+    {
+        /**
+         * Get the tags that should be assigned to the job.
+         *
+         * @return array
+         */
+        public function tags()
+        {
+            return ['render', 'video:'.$this->id];
+        }
+    }
 
 ## Notifications
 
