@@ -1,6 +1,5 @@
 <script type="text/ecmascript-6">
     import $ from 'jQuery'
-    import axios from 'axios'
     import Modal from './Modal.vue'
     import Panel from '../Panels/Panel.vue'
     import Spinner from '../Loaders/Spinner.vue'
@@ -14,7 +13,7 @@
         /**
          * The component's data.
          */
-        data(){
+        data() {
             return {
                 name: '',
                 saving: false
@@ -26,7 +25,7 @@
          * Watch these properties for changes.
          */
         watch: {
-            '$root.showModal'(){
+            '$root.showModal'() {
                 this.name = '';
 
                 this.$nextTick(_ => {
@@ -41,9 +40,14 @@
              * Save the tag and hide the modal.
              */
             saveTag() {
+                if (!this.name) {
+                    this.$refs.tag.focus();
+                    return;
+                }
+
                 this.saving = true;
 
-                axios.post('/horizon/api/monitoring', {'tag': this.name})
+                this.$http.post('/horizon/api/monitoring', {'tag': this.name})
                         .then(response => {
                             this.$root.showModal = false;
 
@@ -97,4 +101,3 @@
         </modal-body>
     </modal>
 </template>
-

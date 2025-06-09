@@ -23,7 +23,6 @@ class HorizonServiceProvider extends ServiceProvider
         $this->registerRoutes();
         $this->registerResources();
         $this->defineAssetPublishing();
-        $this->registerQueueConnectors();
     }
 
     /**
@@ -51,7 +50,8 @@ class HorizonServiceProvider extends ServiceProvider
     {
         Route::group([
             'prefix' => 'horizon',
-            'namespace' => 'Laravel\Horizon\Http\Controllers'
+            'namespace' => 'Laravel\Horizon\Http\Controllers',
+            'middleware' => 'web',
         ], function () {
             $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         });
@@ -75,15 +75,7 @@ class HorizonServiceProvider extends ServiceProvider
     public function defineAssetPublishing()
     {
         $this->publishes([
-            HORIZON_PATH.'/public/js' => public_path('vendor/horizon/js'),
-        ], 'horizon-assets');
-
-        $this->publishes([
-            HORIZON_PATH.'/public/css' => public_path('vendor/horizon/css'),
-        ], 'horizon-assets');
-
-        $this->publishes([
-            HORIZON_PATH.'/public/img' => public_path('vendor/horizon/img'),
+            HORIZON_PATH.'/public' => public_path('vendor/horizon'),
         ], 'horizon-assets');
     }
 
@@ -116,6 +108,7 @@ class HorizonServiceProvider extends ServiceProvider
         $this->offerPublishing();
         $this->registerServices();
         $this->registerCommands();
+        $this->registerQueueConnectors();
     }
 
     /**
@@ -141,7 +134,7 @@ class HorizonServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__.'/../config/horizon.php' => config_path('horizon.php')
+                __DIR__.'/../config/horizon.php' => config_path('horizon.php'),
             ], 'horizon-config');
         }
     }

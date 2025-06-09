@@ -1,5 +1,4 @@
 <script type="text/ecmascript-6">
-    import axios from 'axios'
     import Status from '../../components/Status/Status.vue'
     import Spinner from '../../components/Loaders/Spinner.vue'
     import Message from '../../components/Messages/Message.vue'
@@ -11,7 +10,7 @@
         /**
          * The component's data.
          */
-        data(){
+        data() {
             return {
                 page: 1,
                 perPage: 50,
@@ -31,12 +30,19 @@
             this.refreshJobsPeriodically();
         },
 
+        /**
+         * Clean after the component is destroyed.
+         */
+        destroyed(){
+            clearInterval(this.interval);
+        },
+
 
         /**
          * Watch these properties for changes.
          */
         watch: {
-            '$route'(){
+            '$route'() {
                 this.page = 1;
 
                 this.loadJobs();
@@ -53,7 +59,7 @@
                     this.loadState = true;
                 }
 
-                return axios.get('/horizon/api/jobs/recent/' + '?starting_at=' + starting + '&limit=' + this.perPage)
+                return this.$http.get('/horizon/api/jobs/recent/' + '?starting_at=' + starting + '&limit=' + this.perPage)
                         .then(response => {
                             this.jobs = response.data.jobs;
 
@@ -69,8 +75,8 @@
             /**
              * Refresh the jobs every period of time.
              */
-            refreshJobsPeriodically(){
-                setInterval(() => {
+            refreshJobsPeriodically() {
+                this.interval = setInterval(() => {
                     if (this.page != 1) {
                         return;
                     }
@@ -83,7 +89,7 @@
             /**
              * Load the jobs for the previous page.
              */
-            previous(){
+            previous() {
                 this.loadJobs(
                         ((this.page - 2) * this.perPage) - 1
                 );
@@ -95,7 +101,7 @@
             /**
              * Load the jobs for the next page.
              */
-            next(){
+            next() {
                 this.loadJobs(
                         (this.page * this.perPage) - 1
                 );
@@ -146,7 +152,7 @@
             </tbody>
         </table>
 
-        <div v-if="! loadState" class="simple-pagination">
+        <div v-if="! loadState && jobs.length" class="simple-pagination">
             <button @click="previous" class="btn btn-primary btn-md" :disabled="page==1">Previous</button>
             <button @click="next" class="btn btn-primary btn-md" :disabled="page>=totalPages">Next</button>
         </div>

@@ -1,5 +1,4 @@
 <script type="text/ecmascript-6">
-    import axios from 'axios'
     import moment from 'moment';
     import Layout from '../../layouts/MainLayout.vue'
     import Icon from '../../components/Icons/Icon.vue'
@@ -16,7 +15,7 @@
         /**
          * The component's data.
          */
-        data(){
+        data() {
             return {
                 tagSearchPhrase: '',
                 searchTimeout: null,
@@ -34,7 +33,7 @@
          * Watch these properties for changes.
          */
         watch: {
-            tagSearchPhrase(){
+            tagSearchPhrase() {
                 clearTimeout(this.searchTimeout);
 
                 this.searchTimeout = setTimeout(() => {
@@ -56,6 +55,14 @@
         },
 
 
+        /**
+         * Clean after the component is destroyed.
+         */
+        destroyed(){
+            clearInterval(this.interval);
+        },
+
+
         methods: {
             /**
              * Load the failed jobs.
@@ -67,7 +74,7 @@
 
                 var tagQuery = this.tagSearchPhrase ? 'tag=' + this.tagSearchPhrase + '&' : '';
 
-                axios.get('/horizon/api/jobs/failed?' + tagQuery + 'starting_at=' + starting)
+                this.$http.get('/horizon/api/jobs/failed?' + tagQuery + 'starting_at=' + starting)
                         .then(response => {
                             this.jobs = response.data.jobs;
 
@@ -88,7 +95,7 @@
 
                 this.retryingJobs.push(id);
 
-                axios.post('/horizon/api/jobs/retry/' + id)
+                this.$http.post('/horizon/api/jobs/retry/' + id)
                         .then(() => {
                             setTimeout(() => {
                                 this.retryingJobs = _.reject(this.retryingJobs, job => job == id);
@@ -116,8 +123,8 @@
             /**
              * Refresh the jobs every period of time.
              */
-            refreshJobsPeriodically(){
-                setInterval(() => {
+            refreshJobsPeriodically() {
+                this.interval = setInterval(() => {
                     if (this.page != 1) {
                         return;
                     }
@@ -130,7 +137,7 @@
             /**
              * Load the jobs for the previous page.
              */
-            previous(){
+            previous() {
                 this.loadJobs(((this.page - 2) * this.perPage) - 1);
 
                 this.page -= 1;
@@ -140,7 +147,7 @@
             /**
              * Load the jobs for the next page.
              */
-            next(){
+            next() {
                 this.loadJobs((this.page * this.perPage) - 1);
 
                 this.page += 1;
@@ -203,7 +210,7 @@
                         </tbody>
                     </table>
 
-                    <div v-if="! loadingJobs" class="simple-pagination">
+                    <div v-if="! loadingJobs && jobs.length" class="simple-pagination">
                         <button @click="previous" class="btn btn-primary btn-md" :disabled="page==1">Previous</button>
                         <button @click="next" class="btn btn-primary btn-md" :disabled="page>=totalPages">Next</button>
                     </div>
@@ -212,4 +219,3 @@
         </section>
     </layout>
 </template>
-

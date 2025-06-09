@@ -9,7 +9,8 @@ class RetryController extends Controller
     /**
      * Retry a failed job.
      *
-     * @return \Illuminate\Http\Response
+     * @param  string  $id
+     * @return void
      */
     public function store($id)
     {

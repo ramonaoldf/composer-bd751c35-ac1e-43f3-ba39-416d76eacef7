@@ -12,7 +12,7 @@ class AddSupervisor
     /**
      * Process the command.
      *
-     * @param  MasterSupervisor  $supervisor
+     * @param  \Laravel\Horizon\MasterSupervisor  $master
      * @param  array  $options
      * @return void
      */
@@ -20,7 +20,7 @@ class AddSupervisor
     {
         $options = SupervisorOptions::fromArray($options);
 
-        $master->supervisors[] = $process = new SupervisorProcess(
+        $master->supervisors[] = new SupervisorProcess(
             $options, $this->createProcess($master, $options), function ($type, $line) use ($master) {
                 $master->output($type, $line);
             }
@@ -30,15 +30,15 @@ class AddSupervisor
     /**
      * Create the Symfony process instance.
      *
-     * @param  MasterSupervisor  $supervisor
-     * @param  SupervisorOptions  $options
-     * @return Process
+     * @param  \Laravel\Horizon\MasterSupervisor  $master
+     * @param  \Laravel\Horizon\SupervisorOptions  $options
+     * @return \Symfony\Component\Process\Process
      */
     protected function createProcess(MasterSupervisor $master, SupervisorOptions $options)
     {
         $command = $options->toSupervisorCommand();
 
-        return (new Process($command, $options->directory ?? null))
+        return (new Process($command, $options->directory ?? base_path()))
                     ->setTimeout(null)
                     ->disableOutput();
     }

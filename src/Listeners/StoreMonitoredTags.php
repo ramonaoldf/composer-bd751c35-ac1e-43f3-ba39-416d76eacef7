@@ -8,23 +8,16 @@ use Laravel\Horizon\Contracts\TagRepository;
 class StoreMonitoredTags
 {
     /**
-     * The monitored tag repository.
-     *
-     * @var MonitoredTagRepository
-     */
-    public $monitored;
-
-    /**
      * The tag repository implementation.
      *
-     * @var TagRepository
+     * @var \Laravel\Horizon\Contracts\TagRepository
      */
     public $tags;
 
     /**
      * Create a new listener instance.
      *
-     * @param  TagRepository  $jobs
+     * @param  \Laravel\Horizon\Contracts\TagRepository  $tags
      * @return void
      */
     public function __construct(TagRepository $tags)
@@ -35,7 +28,7 @@ class StoreMonitoredTags
     /**
      * Handle the event.
      *
-     * @param  JobPushed  $event
+     * @param  \Laravel\Horizon\Events\JobPushed  $event
      * @return void
      */
     public function handle(JobPushed $event)

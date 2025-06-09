@@ -1,5 +1,4 @@
 <script type="text/ecmascript-6">
-    import axios from 'axios'
     import Status from '../../components/Status/Status.vue'
     import Spinner from '../../components/Loaders/Spinner.vue'
     import Message from '../../components/Messages/Message.vue'
@@ -12,7 +11,7 @@
         /**
          * The component's data.
          */
-        data(){
+        data() {
             return {
                 page: 1,
                 perPage: 50,
@@ -36,12 +35,19 @@
             this.refreshJobsPeriodically();
         },
 
+        /**
+         * Clean after the component is destroyed.
+         */
+        destroyed(){
+            clearInterval(this.interval);
+        },
+
 
         /**
          * Watch these properties for changes.
          */
         watch: {
-            '$route'(){
+            '$route'() {
                 this.page = 1;
 
                 this.loadJobs(this.$route.params.tag);
@@ -60,7 +66,7 @@
 
                 tag = this.type == 'failed' ? 'failed:' + tag : tag;
 
-                return axios.get('/horizon/api/monitoring/' + encodeURIComponent(tag) + '?starting_at=' + starting + '&limit=' + this.perPage)
+                return this.$http.get('/horizon/api/monitoring/' + encodeURIComponent(tag) + '?starting_at=' + starting + '&limit=' + this.perPage)
                         .then(response => {
                             this.jobs[this.type] = response.data.jobs;
 
@@ -76,8 +82,8 @@
             /**
              * Refresh the jobs every period of time.
              */
-            refreshJobsPeriodically(){
-                setInterval(() => {
+            refreshJobsPeriodically() {
+                this.interval = setInterval(() => {
                     if (this.page != 1) {
                         return;
                     }
@@ -90,7 +96,7 @@
             /**
              * Load the jobs for the previous page.
              */
-            previous(){
+            previous() {
                 this.loadJobs(this.$route.params.tag,
                         (this.page - 2) * this.perPage
                 );
@@ -102,7 +108,7 @@
             /**
              * Load the jobs for the next page.
              */
-            next(){
+            next() {
                 this.loadJobs(this.$route.params.tag,
                         this.page * this.perPage
                 );
@@ -164,4 +170,3 @@
         </div>
     </div>
 </template>
-

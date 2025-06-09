@@ -13,7 +13,7 @@ class DashboardStatsController extends Controller
     /**
      * Get the key performance stats for the dashboard.
      *
-     * @return \Illuminate\Http\Response
+     * @return array
      */
     public function index()
     {
@@ -55,7 +55,7 @@ class DashboardStatsController extends Controller
         }
 
         return collect($masters)->contains(function ($master) {
-            return $master->status == 'paused';
+            return $master->status === 'paused';
         }) ? 'paused' : 'running';
     }
 }

@@ -39,7 +39,7 @@ interface MasterSupervisorRepository
     /**
      * Update the information about the given master supervisor.
      *
-     * @param  MasterSupervisor  $master
+     * @param  \Laravel\Horizon\MasterSupervisor  $master
      * @return void
      */
     public function update(MasterSupervisor $master);
@@ -51,4 +51,11 @@ interface MasterSupervisorRepository
      * @return void
      */
     public function forget($name);
+
+    /**
+     * Remove expired master supervisors from storage.
+     *
+     * @return void
+     */
+    public function flushExpired();
 }
